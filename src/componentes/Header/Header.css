@@ -1,0 +1,17 @@
+/* Header.css */
+.custom-header {
+  padding: 0 20px;
+  height: 64px;
+  line-height: 64px;
+  background-color: #2f4050;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.custom-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 3rem;
+  font-weight: 500;
+}
