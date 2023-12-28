@@ -26,7 +26,7 @@ const tarefasReducer = (state = initialState, action) => {
           ...state,
           loading: false,
           tarefas: state.tarefas.map(tarefa =>
-            tarefa.id === action.payload ? { ...tarefa, status: 'finalizada' } : tarefa
+            tarefa.id === action.payload ? { ...tarefa, status: 'Finalizada' } : tarefa
           ),
         };
 
