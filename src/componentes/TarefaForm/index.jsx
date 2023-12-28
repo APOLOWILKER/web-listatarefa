@@ -13,12 +13,9 @@ const TarefaForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const tarefas = useSelector((state) => state.tarefas);
-  const tarefaEdit = tarefas.find((tarefa) => tarefa.id === id) || {};
-  console.log('tarefaEdit', tarefaEdit);
 
   useEffect(() => {
     if (id) {
-      console.log('Buscar detalhes da tarefa com ID:', fetchTarefasRequest(id));
       dispatch(fetchTarefasRequest(id));
     }
   }, [id, dispatch]);
@@ -26,7 +23,6 @@ const TarefaForm = () => {
   const onFinish = (values) => {
     try {
       if (id) {
-        console.log('Editar tarefa com ID:', id);
         dispatch(updateTarefaRequest({ ...values, id }));
       } else {
         dispatch(createTarefaRequest({ ...values, status: 'Pendente' }));
@@ -34,7 +30,6 @@ const TarefaForm = () => {
 
       message.success('Tarefa salva com sucesso!');
       form.resetFields();
-
       navigate('/');
     } catch (error) {
       console.error('Erro ao salvar a tarefa:', error);
@@ -45,18 +40,22 @@ const TarefaForm = () => {
   return (
     <>
       <CustomHeader pageTitle={id ? 'Editar Tarefa' : 'Nova Tarefa'} />
+
       <div style={{ display: 'flex', width: 'auto', justifyContent: 'center' }}>
-        <Form form={form} onFinish={onFinish} layout="vertical" style={{minWidth: 600}}>
+        <Form form={form} onFinish={onFinish} layout="vertical" style={{ minWidth: 600 }}>
           <Form.Item
-            style={{fontWeight: 'bold'}}
+            style={{ fontWeight: 'bold' }}
             label="Descrição da Tarefa"
             name="description"
             rules={[{ required: true, message: 'Informe a descrição da tarefa' }]}
-            initialValue={id ? tarefaEdit.description : ''}
+            initialValue={id ? tarefas[0]?.description : ''}
           >
             <Input />
           </Form.Item>
-          <Form.Item style={{fontWeight: 'bold'}} label="Status" name="status" initialValue="Pendente">
+          {id && tarefas[0]?.imagem && (
+            <img src={tarefas[0].imagem} alt={`Imagem da Tarefa`} style={{ width: '50px' }} />
+          )}
+          <Form.Item style={{ fontWeight: 'bold' }} label="Status" name="status" initialValue="Pendente">
             <Select>
               <Option value="Pendente">Pendente</Option>
               <Option value="Finalizada">Finalizada</Option>

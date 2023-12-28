@@ -10,8 +10,6 @@ const createTarefa = dados => axios.post(baseURL, dados).then(response => respon
 
 const updateTarefa = (id, dados) => axios.put(`${baseURL}/${id}`, dados).then(response => response.data);
 
-console.log(updateTarefa(156));
-
 const deleteTarefa = id => axios.delete(`${baseURL}/${id}`);
 
 export { fetchTarefas, fetchTarefaById, createTarefa, updateTarefa, deleteTarefa };

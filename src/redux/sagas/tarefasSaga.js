@@ -49,7 +49,7 @@ function* updateTarefa(action) {
 
 function* completeTarefa(action) {
   try {
-    yield call(api.completeTarefa, action.payload); // Supondo que completeTarefa aceita o ID como argumento
+    yield call(api.updateTarefa, action.payload, { status: 'Finalizada' }); // Supondo que completeTarefa aceita o ID como argumento
     yield put(actions.completeTarefaSuccess(action.payload));
     yield put(actions.fetchTarefasRequest()); // Atualiza a lista após completar uma tarefa
   } catch (error) {

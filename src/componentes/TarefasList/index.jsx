@@ -14,8 +14,7 @@ const TarefasList = () => {
     dispatch(fetchTarefasRequest());
   }, [dispatch]);
 
-  const handleDelete = (id) => {
-    
+  const handleDelete = (id) => {  
     dispatch(deleteTarefaRequest(id));
     message.success('Tarefa excluída com sucesso!');
     console.log(`Deletar tarefa com ID: ${id}`);

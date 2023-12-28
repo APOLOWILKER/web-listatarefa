@@ -1,4 +1,5 @@
-// redux/actions/tarefasActions.js
+// tarefasActions.js
+
 export const fetchTarefasRequest = () => ({ type: 'FETCH_TAREFAS_REQUEST' });
 export const fetchTarefasSuccess = tarefas => ({ type: 'FETCH_TAREFAS_SUCCESS', payload: tarefas });
 export const fetchTarefasFailure = error => ({ type: 'FETCH_TAREFAS_FAILURE', payload: error });
