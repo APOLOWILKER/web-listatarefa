@@ -46,13 +46,27 @@ function* updateTarefa(action) {
 
 function* completeTarefa(action) {
   try {
-    yield call(api.updateTarefa, action.payload, { status: 'Finalizada' }); // Supondo que completeTarefa aceita o ID como argumento
-    yield put(actions.completeTarefaSuccess(action.payload));
-    yield put(actions.fetchTarefasRequest()); // Atualiza a lista após completar uma tarefa
+    const id = action.payload;
+    console.log('ID da tarefa saga:', action.payload);
+    if (id !== undefined) {
+      console.log('ID da tarefa: IFFF', id);
+      yield call(api.updateTarefa, id, { status: 'Finalizada' });
+      yield put(actions.completeTarefaSuccess(action.payload));
+      yield put(actions.fetchTarefasRequest());
+    } else {
+      console.error('ID da tarefa não definido');
+      // Lidar com a situação em que o ID não está definido
+    }
   } catch (error) {
+    if (error.response) {
+      // Aqui você pode acessar detalhes específicos do erro de resposta
+      console.error('Detalhes da resposta:', error.response.data);
+      console.error('Status HTTP:', error.response.status);
+    }
     yield put(actions.completeTarefaFailure(error.message));
   }
 }
+
 
 function* tarefasSaga() {
   yield takeLatest('FETCH_TAREFAS_REQUEST', fetchTarefas);

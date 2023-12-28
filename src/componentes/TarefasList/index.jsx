@@ -24,7 +24,7 @@ const TarefasList = () => {
     if (status === 'Pendente') {
       dispatch(completeTarefaRequest(id));
       message.success('Tarefa concluída com sucesso!');
-      console.log(`Completar tarefa com ID: ${id}`);
+      console.log(`Completar tarefa com ID: ${id} ${typeof id}`);
     } else {
       message.warning('Apenas tarefas pendentes podem ser concluídas.');
     }

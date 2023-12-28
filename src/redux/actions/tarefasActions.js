@@ -16,6 +16,6 @@ export const deleteTarefaRequest = id => ({ type: 'DELETE_TAREFA_REQUEST', paylo
 export const deleteTarefaSuccess = id => ({ type: 'DELETE_TAREFA_SUCCESS', payload: id });
 export const deleteTarefaFailure = error => ({ type: 'DELETE_TAREFA_FAILURE', payload: error });
 
-export const completeTarefaRequest = id => ({ type: 'COMPLETE_TAREFA_REQUEST', payload: id });
-export const completeTarefaSuccess = id => ({ type: 'COMPLETE_TAREFA_SUCCESS', payload: id });
+export const completeTarefaRequest = tarefaId => ({ type: 'COMPLETE_TAREFA_REQUEST', payload: tarefaId });
+export const completeTarefaSuccess = tarefaId => ({ type: 'COMPLETE_TAREFA_SUCCESS', payload: tarefaId });
 export const completeTarefaFailure = error => ({ type: 'COMPLETE_TAREFA_FAILURE', payload: error });
