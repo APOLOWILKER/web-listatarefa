@@ -34,13 +34,10 @@ function* deleteTarefa(action) {
 
 function* updateTarefa(action) {
   try {
-    // Atualiza a tarefa e, em seguida, busca os detalhes atualizados
-    yield call(api.updateTarefa, action.payload);
-    const updatedTarefa = yield call(api.fetchTarefa, action.payload.id);
+    yield call(api.updateTarefa, action.payload.id, action.payload); // Certifique-se de passar ID e dados corretamente
+    const updatedTarefa = yield call(api.fetchTarefaById, action.payload.id);
 
-    // Dispara a ação de sucesso com os detalhes atualizados
     yield put(actions.updateTarefaSuccess(updatedTarefa));
-
     yield put(actions.fetchTarefasRequest()); // Atualiza a lista após atualizar uma tarefa
   } catch (error) {
     yield put(actions.updateTarefaFailure(error.message));
