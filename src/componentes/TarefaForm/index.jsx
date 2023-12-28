@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Form, Input, Select, Button, message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { createTarefaRequest, updateTarefaRequest, fetchTarefasRequest } from '../../redux/actions/tarefasActions';
@@ -12,13 +12,25 @@ const TarefaForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
-  const tarefas = useSelector((state) => state.tarefas);
 
+  const tarefas = useSelector((state) => state.tarefas);
+  const tarefa = useMemo(() => tarefas.find((t) => t.id == id), [id, tarefas]);
+
+  const [initialStatus] = useState('Pendente');
+  
   useEffect(() => {
     if (id) {
       dispatch(fetchTarefasRequest(id));
     }
   }, [id, dispatch]);
+
+  useEffect(() => {
+    // Atualiza o formulário com os valores da tarefa quando ela é carregada
+    form.setFieldsValue({
+      description: tarefa?.description || '',
+      status: tarefa?.status || initialStatus,
+    });
+  }, [tarefa, form, initialStatus]);
 
   const onFinish = (values) => {
     try {
@@ -37,6 +49,10 @@ const TarefaForm = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate('/');
+  };
+  {console.log(tarefa?.description)}
   return (
     <>
       <CustomHeader pageTitle={id ? 'Editar Tarefa' : 'Nova Tarefa'} />
@@ -48,14 +64,11 @@ const TarefaForm = () => {
             label="Descrição da Tarefa"
             name="description"
             rules={[{ required: true, message: 'Informe a descrição da tarefa' }]}
-            initialValue={id ? tarefas[0]?.description : ''}
+            value={tarefa?.description}
           >
             <Input />
           </Form.Item>
-          {id && tarefas[0]?.imagem && (
-            <img src={tarefas[0].imagem} alt={`Imagem da Tarefa`} style={{ width: '50px' }} />
-          )}
-          <Form.Item style={{ fontWeight: 'bold' }} label="Status" name="status" initialValue="Pendente">
+          <Form.Item style={{ fontWeight: 'bold' }} label="Status" name="status" initialValue={initialStatus}>
             <Select>
               <Option value="Pendente">Pendente</Option>
               <Option value="Finalizada">Finalizada</Option>
@@ -64,6 +77,9 @@ const TarefaForm = () => {
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Salvar Tarefa
+            </Button>
+            <Button style={{ marginLeft: 8 }} onClick={handleBack}>
+              Voltar
             </Button>
           </Form.Item>
         </Form>
