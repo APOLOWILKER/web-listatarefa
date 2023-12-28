@@ -26,7 +26,7 @@ const CustomHeader = () => {
 };
 
 CustomHeader.propTypes = {
-  pageTitle: PropTypes.string.isRequired,
+  pageTitle: PropTypes.string,
 };
 
 export default CustomHeader;

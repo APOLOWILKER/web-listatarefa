@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Form, Input, Select, Button, message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { createTarefaRequest, updateTarefaRequest } from '../../redux/actions/tarefasActions';
+import { createTarefaRequest, updateTarefaRequest, fetchTarefasRequest } from '../../redux/actions/tarefasActions';
 import { useNavigate, useParams } from 'react-router-dom';
 import CustomHeader from '../Header';
 
@@ -18,8 +18,8 @@ const TarefaForm = () => {
 
   useEffect(() => {
     if (id) {
-      console.log('Buscar detalhes da tarefa com ID:', updateTarefaRequest(id));
-      dispatch(updateTarefaRequest(id));
+      console.log('Buscar detalhes da tarefa com ID:', fetchTarefasRequest(id));
+      dispatch(fetchTarefasRequest(id));
     }
   }, [id, dispatch]);
 
@@ -29,7 +29,7 @@ const TarefaForm = () => {
         console.log('Editar tarefa com ID:', id);
         dispatch(updateTarefaRequest({ ...values, id }));
       } else {
-        dispatch(createTarefaRequest({ ...values, status: 'pendente' }));
+        dispatch(createTarefaRequest({ ...values, status: 'Pendente' }));
       }
 
       message.success('Tarefa salva com sucesso!');
@@ -56,10 +56,10 @@ const TarefaForm = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item style={{fontWeight: 'bold'}} label="Status" name="status" initialValue="pendente">
+          <Form.Item style={{fontWeight: 'bold'}} label="Status" name="status" initialValue="Pendente">
             <Select>
-              <Option value="pendente">Pendente</Option>
-              <Option value="finalizada">Finalizada</Option>
+              <Option value="Pendente">Pendente</Option>
+              <Option value="Finalizada">Finalizada</Option>
             </Select>
           </Form.Item>
           <Form.Item>
