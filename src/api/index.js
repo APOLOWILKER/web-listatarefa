@@ -10,6 +10,17 @@ const createTarefa = dados => axios.post(baseURL, dados).then(response => respon
 
 const updateTarefa = (id, dados) => axios.put(`${baseURL}/${id}`, dados).then(response => response.data);
 
+const updateTarefaImage = (id, imagem) => {
+  const formData = new FormData();
+  formData.append('image', imagem);
+
+  return axios.put(`${baseURL}/image/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }).then(response => response.data);
+};
+
 const deleteTarefa = id => axios.delete(`${baseURL}/${id}`);
 
-export { fetchTarefas, fetchTarefaById, createTarefa, updateTarefa, deleteTarefa };
+export { fetchTarefas, fetchTarefaById, createTarefa, updateTarefa, updateTarefaImage, deleteTarefa };

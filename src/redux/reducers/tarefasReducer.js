@@ -1,3 +1,6 @@
+// redux/reducers/tarefasReducer.js
+import * as types from '../types';
+
 const initialState = {
   tarefas: [],
   loading: false,
@@ -6,30 +9,34 @@ const initialState = {
 
 const tarefasReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'FETCH_TAREFAS_REQUEST':
-    case 'CREATE_TAREFA_REQUEST':
-    case 'UPDATE_TAREFA_REQUEST':
-    case 'DELETE_TAREFA_REQUEST':
-    case 'COMPLETE_TAREFA_REQUEST':
+    case types.FETCH_TAREFAS_REQUEST:
+    case types.CREATE_TAREFA_REQUEST:
+    case types.UPDATE_TAREFA_REQUEST:
+    case types.DELETE_TAREFA_REQUEST:
+    case types.COMPLETE_TAREFA_REQUEST:
+    case types.UPDATE_TAREFA_IMAGE_REQUEST:
       return handleRequest(state);
 
-    case 'FETCH_TAREFAS_SUCCESS':
+    case types.FETCH_TAREFAS_SUCCESS:
       return handleFetchTarefasSuccess(state, action.payload);
 
-    case 'CREATE_TAREFA_SUCCESS':
-    case 'UPDATE_TAREFA_SUCCESS':
-    case 'DELETE_TAREFA_SUCCESS':
+    case types.CREATE_TAREFA_SUCCESS:
+    case types.UPDATE_TAREFA_SUCCESS:
+    case types.DELETE_TAREFA_SUCCESS:
+    case types.UPDATE_TAREFA_IMAGE_SUCCESS:
       return handleSuccess(state);
 
-    case 'COMPLETE_TAREFA_SUCCESS':{
+    case types.COMPLETE_TAREFA_SUCCESS: {
       const completedTarefaId = action.payload;
       return handleCompleteTarefaSuccess(state, completedTarefaId);
-}
-    case 'FETCH_TAREFAS_FAILURE':
-    case 'CREATE_TAREFA_FAILURE':
-    case 'UPDATE_TAREFA_FAILURE':
-    case 'DELETE_TAREFA_FAILURE':
-    case 'COMPLETE_TAREFA_FAILURE':
+    }
+
+    case types.FETCH_TAREFAS_FAILURE:
+    case types.CREATE_TAREFA_FAILURE:
+    case types.UPDATE_TAREFA_FAILURE:
+    case types.DELETE_TAREFA_FAILURE:
+    case types.COMPLETE_TAREFA_FAILURE:
+    case types.UPDATE_TAREFA_IMAGE_FAILURE:
       return handleFailure(state, action.payload);
 
     default:

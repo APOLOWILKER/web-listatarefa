@@ -42,8 +42,8 @@ const TarefasList = () => {
       render: (text, record) => (
         <span>
           {text} <br />
-          {record.imagem ? (
-            <img src={record.imagem} alt={`Imagem ${record.id}`} style={{ width: '50px' }} />
+          {record.imageUrl ? (
+            <img src={`data:image/jpeg;base64,${record.imageUrl}`} alt={`Imagem ${record.id}`} style={{ width: '50px' }} />
           ) : (
             <PictureOutlined />
           )}
