@@ -43,6 +43,7 @@ function* deleteTarefa(action) {
 
 function* updateTarefa(action) {
   try {
+    console.log('Atualizando tarefa. Ação:', action.payload);
     const { id, ...tarefaData } = action.payload;
 
     console.log('Atualizando tarefa. ID:', id, 'Dados:', tarefaData);

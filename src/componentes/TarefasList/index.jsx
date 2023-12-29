@@ -22,7 +22,7 @@ const TarefasList = () => {
   const handleComplete = async (id, status) => {
     if (status === 'Pendente') {
       try {
-        const tarefaCompleta = tarefas.find(tarefa => tarefa.id === id);
+        const tarefaCompleta = tarefas.find((tarefa) => tarefa.id === id);
         dispatch(completeTarefaRequest(tarefaCompleta));
         message.success('Tarefa concluída com sucesso!');
       } catch (error) {
@@ -43,7 +43,11 @@ const TarefasList = () => {
         <span>
           {text} <br />
           {record.imageUrl ? (
-            <img src={`data:image/jpeg;base64,${record.imageUrl}`} alt={`Imagem ${record.id}`} style={{ width: '50px' }} />
+            <img
+              src={`data:image/jpeg;base64,${record.imageUrl}`}
+              alt={`Imagem ${record.id}`}
+              style={{ width: '50px' }}
+            />
           ) : (
             <PictureOutlined />
           )}

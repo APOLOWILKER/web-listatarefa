@@ -1,12 +1,8 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Form, Input, Select, Button, message, Upload } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import {
-  createTarefaRequest,
-  updateTarefaRequest,
-  fetchTarefasRequest,
-} from '../../redux/actions/tarefasActions';
+import { createTarefaRequest, updateTarefaRequest, fetchTarefasRequest } from '../../redux/actions/tarefasActions';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import CustomHeader from '../Header';
@@ -19,19 +15,40 @@ const TarefaForm = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const tarefas = useSelector((state) => state.tarefas);
-  const tarefa = useMemo(() => (Array.isArray(tarefas) ? tarefas.find((t) => t.id == id) : null), [
-    id,
-    tarefas,
-  ]);
+
+  const isEditing = !!id; // Verifica se está editando uma tarefa existente
+
+  const tarefa = useMemo(() => {
+    if (Array.isArray(tarefas)) {
+      return tarefas.find((t) => t.id == id);
+    }
+    return null;
+  }, [id, tarefas]);
 
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!id) {
-      dispatch(fetchTarefasRequest());
+    dispatch(fetchTarefasRequest());
+  }, [dispatch]);
+
+  useEffect(() => {
+    form.resetFields(); // Resetar os campos do formulário
+
+    if (isEditing) {
+      // Se estiver editando, preencher os campos com os dados da tarefa
+      form.setFieldsValue({
+        description: tarefa.description || '',
+        status: tarefa.status || 'Pendente',
+      });
+
+      if (tarefa.image) {
+        setFileList([{ uid: '-1', name: 'Imagem', status: 'done', url: tarefa.image }]);
+      } else {
+        setFileList([]);
+      }
     }
-  }, [id, dispatch]);
+  }, [id, isEditing, tarefa, form]);
 
   const getBase64 = (img, callback) => {
     const reader = new FileReader();
@@ -83,18 +100,22 @@ const TarefaForm = () => {
     try {
       const tarefaData = { ...values, id };
 
-      if (fileList.length > 0) {
-        const imageUrl = fileList[0].url;
-
-        if (id) {
+      if (isEditing) {
+        if (fileList.length > 0) {
+          const imageUrl = fileList[0].url;
           await dispatch(updateTarefaRequest({ ...tarefaData, image: imageUrl }));
         } else {
-          const createdTarefa = await dispatch(createTarefaRequest(tarefaData));
-          await dispatch(updateTarefaRequest({ ...createdTarefa, image: imageUrl }));
+          await dispatch(updateTarefaRequest({ ...tarefaData, image: null }));
         }
       } else {
-        const createdTarefa = await dispatch(createTarefaRequest(tarefaData));
-        await dispatch(updateTarefaRequest({ ...createdTarefa, image: null }));
+        if (fileList.length > 0) {
+          const imageUrl = fileList[0].url;
+          const createdTarefa = await dispatch(createTarefaRequest({ ...tarefaData, image: imageUrl }));
+          await dispatch(updateTarefaRequest({ ...createdTarefa, image: imageUrl }));
+        } else {
+          const createdTarefa = await dispatch(createTarefaRequest(tarefaData));
+          await dispatch(updateTarefaRequest({ ...createdTarefa, image: null }));
+        }
       }
 
       form.resetFields();
@@ -109,7 +130,7 @@ const TarefaForm = () => {
 
   return (
     <>
-      <CustomHeader pageTitle={id ? 'Editar Tarefa' : 'Nova Tarefa'} />
+      <CustomHeader pageTitle={isEditing ? 'Editar Tarefa' : 'Nova Tarefa'} />
 
       <div style={{ display: 'flex', width: 'auto', justifyContent: 'center' }}>
         <Form form={form} onFinish={onFinish} layout="vertical" style={{ minWidth: 600 }}>
@@ -117,11 +138,10 @@ const TarefaForm = () => {
             label="Descrição da Tarefa"
             name="description"
             rules={[{ required: true, message: 'Informe a descrição da tarefa' }]}
-            initialValue={tarefa?.description || ''}
           >
             <Input />
           </Form.Item>
-          <Form.Item label="Status" name="status" initialValue="Pendente">
+          <Form.Item label="Status" name="status">
             <Select>
               <Option value="Pendente">Pendente</Option>
               <Option value="Finalizada">Finalizada</Option>
@@ -132,6 +152,7 @@ const TarefaForm = () => {
             extra="Escolha uma imagem para a tarefa"
             name="file"
             valuePropName="file"
+            getValueFromEvent={(e) => e.fileList}
           >
             <Upload
               name="file"
@@ -141,8 +162,8 @@ const TarefaForm = () => {
               onChange={handleChange}
             >
               <div>
-                {tarefa?.image ? (
-                  <img src={tarefa.image} alt="Imagem da Tarefa" style={{ width: '100%' }} />
+                {fileList.length >= 1 ? (
+                  <img src={fileList[0].url} alt="Imagem da Tarefa" style={{ width: '100%' }} />
                 ) : (
                   uploadButton
                 )}
