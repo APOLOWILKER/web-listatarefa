@@ -15,16 +15,21 @@ const TarefaForm = () => {
   const { id } = useParams();
 
   const tarefas = useSelector((state) => state.tarefas);
-  const tarefa = useMemo(() => tarefas.find((t) => t.id == id), [id, tarefas]);
+  const tarefa = useMemo(() => {
+    if (Array.isArray(tarefas)) {
+      return tarefas.find((t) => t.id == id);
+    }
+    return null;
+  }, [id, tarefas]);
 
   const [initialStatus] = useState('Pendente');
   const [fileList, setFileList] = useState([]);
 
   useEffect(() => {
-    if (id) {
+    if (id && Array.isArray(tarefas)) {
       dispatch(fetchTarefasRequest(id));
     }
-  }, [id, dispatch]);
+  }, [id, dispatch, tarefas]);
 
   useEffect(() => {
     form.setFieldsValue({
@@ -78,19 +83,21 @@ const TarefaForm = () => {
     try {
       if (fileList.length > 0) {
         const imageUrl = fileList[0].url;
+        const statusToSet = id ? tarefa?.status : values.status;
         if (id) {
           await dispatch(updateTarefaRequest({ ...values, id, imageUrl }));
         } else {
-          await dispatch(createTarefaRequest({ ...values, status: 'Pendente', imageUrl }));
+          await dispatch(createTarefaRequest({ ...values, status: statusToSet, imageUrl }));
         }
       } else {
+        const statusToSet = id ? tarefa?.status : values.status; 
         if (id) {
           await dispatch(updateTarefaRequest({ ...values, id }));
         } else {
-          await dispatch(createTarefaRequest({ ...values, status: 'Pendente' }));
+          await dispatch(createTarefaRequest({ ...values, status: statusToSet }));
         }
       }
-
+  
       form.resetFields();
       navigate('/');
       message.success('Tarefa salva com sucesso!');
@@ -99,6 +106,8 @@ const TarefaForm = () => {
       message.error('Erro ao salvar a tarefa. Tente novamente mais tarde.');
     }
   };
+  
+  
 
   return (
     <>
@@ -113,7 +122,7 @@ const TarefaForm = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item label="Status" name="status" initialValue={initialStatus}>
+          <Form.Item label="Status" name="status">
             <Select>
               <Option value="Pendente">Pendente</Option>
               <Option value="Finalizada">Finalizada</Option>
