@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTarefasRequest, completeTarefaRequest, deleteTarefaRequest } from '../../redux/actions/tarefasActions';
-import { Table, Button, Space, Popconfirm, message } from 'antd';
+import { Table, Button, Space, Popconfirm, message, Tag } from 'antd';
 import { EditOutlined, DeleteOutlined, CheckOutlined, PictureOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import './TarefaForm.css'
+import './TarefaForm.css';
 
 const TarefasList = () => {
   const dispatch = useDispatch();
@@ -14,7 +14,7 @@ const TarefasList = () => {
     dispatch(fetchTarefasRequest());
   }, [dispatch]);
 
-  const handleDelete = (id) => {  
+  const handleDelete = (id) => {
     dispatch(deleteTarefaRequest(id));
     message.success('Tarefa excluída com sucesso!');
   };
@@ -22,14 +22,9 @@ const TarefasList = () => {
   const handleComplete = async (id, status) => {
     if (status === 'Pendente') {
       try {
-        // Obtenha a tarefa completa com base no ID
         const tarefaCompleta = tarefas.find(tarefa => tarefa.id === id);
-  
-        // Dispatch a ação completeTarefaRequest com a tarefa completa como payload
         dispatch(completeTarefaRequest(tarefaCompleta));
-  
         message.success('Tarefa concluída com sucesso!');
-
       } catch (error) {
         console.error('Erro ao completar tarefa:', error);
         message.error('Erro ao completar tarefa. Tente novamente mais tarde.');
@@ -38,7 +33,6 @@ const TarefasList = () => {
       message.warning('Apenas tarefas pendentes podem ser concluídas.');
     }
   };
-  
 
   const columns = [
     {
@@ -60,6 +54,11 @@ const TarefasList = () => {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
+      render: (status) => (
+        <Tag color={status === 'Finalizada' ? 'green' : 'red'} style={{ fontWeight: 'bold' }}>
+          {status}
+        </Tag>
+      ),
     },
     {
       title: 'Ações',
