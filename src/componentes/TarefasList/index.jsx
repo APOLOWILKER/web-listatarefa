@@ -17,18 +17,28 @@ const TarefasList = () => {
   const handleDelete = (id) => {  
     dispatch(deleteTarefaRequest(id));
     message.success('Tarefa excluída com sucesso!');
-    console.log(`Deletar tarefa com ID: ${id}`);
   };
 
-  const handleComplete = (id, status) => {
+  const handleComplete = async (id, status) => {
     if (status === 'Pendente') {
-      dispatch(completeTarefaRequest(id));
-      message.success('Tarefa concluída com sucesso!');
-      console.log(`Completar tarefa com ID: ${id} ${typeof id}`);
+      try {
+        // Obtenha a tarefa completa com base no ID
+        const tarefaCompleta = tarefas.find(tarefa => tarefa.id === id);
+  
+        // Dispatch a ação completeTarefaRequest com a tarefa completa como payload
+        dispatch(completeTarefaRequest(tarefaCompleta));
+  
+        message.success('Tarefa concluída com sucesso!');
+
+      } catch (error) {
+        console.error('Erro ao completar tarefa:', error);
+        message.error('Erro ao completar tarefa. Tente novamente mais tarde.');
+      }
     } else {
       message.warning('Apenas tarefas pendentes podem ser concluídas.');
     }
   };
+  
 
   const columns = [
     {

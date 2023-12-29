@@ -1,5 +1,3 @@
-// tarefasActions.js
-
 export const fetchTarefasRequest = () => ({ type: 'FETCH_TAREFAS_REQUEST' });
 export const fetchTarefasSuccess = tarefas => ({ type: 'FETCH_TAREFAS_SUCCESS', payload: tarefas });
 export const fetchTarefasFailure = error => ({ type: 'FETCH_TAREFAS_FAILURE', payload: error });
@@ -16,6 +14,6 @@ export const deleteTarefaRequest = id => ({ type: 'DELETE_TAREFA_REQUEST', paylo
 export const deleteTarefaSuccess = id => ({ type: 'DELETE_TAREFA_SUCCESS', payload: id });
 export const deleteTarefaFailure = error => ({ type: 'DELETE_TAREFA_FAILURE', payload: error });
 
-export const completeTarefaRequest = tarefaId => ({ type: 'COMPLETE_TAREFA_REQUEST', payload: tarefaId });
-export const completeTarefaSuccess = tarefaId => ({ type: 'COMPLETE_TAREFA_SUCCESS', payload: tarefaId });
+export const completeTarefaRequest = tarefa => ({ type: 'COMPLETE_TAREFA_REQUEST', payload: tarefa });
+export const completeTarefaSuccess = tarefa => ({ type: 'COMPLETE_TAREFA_SUCCESS', payload: tarefa });
 export const completeTarefaFailure = error => ({ type: 'COMPLETE_TAREFA_FAILURE', payload: error });

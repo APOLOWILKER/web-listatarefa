@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Form, Input, Select, Button, message } from 'antd';
+import { Form, Input, Select, Button, message, Upload } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { createTarefaRequest, updateTarefaRequest, fetchTarefasRequest } from '../../redux/actions/tarefasActions';
 import { useNavigate, useParams } from 'react-router-dom';
+import { PlusOutlined } from '@ant-design/icons';
 import CustomHeader from '../Header';
 
 const { Option } = Select;
@@ -17,7 +18,8 @@ const TarefaForm = () => {
   const tarefa = useMemo(() => tarefas.find((t) => t.id == id), [id, tarefas]);
 
   const [initialStatus] = useState('Pendente');
-  
+  const [fileList, setFileList] = useState([]);
+
   useEffect(() => {
     if (id) {
       dispatch(fetchTarefasRequest(id));
@@ -25,34 +27,79 @@ const TarefaForm = () => {
   }, [id, dispatch]);
 
   useEffect(() => {
-    // Atualiza o formulário com os valores da tarefa quando ela é carregada
     form.setFieldsValue({
       description: tarefa?.description || '',
       status: tarefa?.status || initialStatus,
     });
+
+    if (tarefa?.imageUrl) {
+      setFileList([{ uid: '-1', name: 'Imagem', status: 'done', url: tarefa.imageUrl }]);
+    } else {
+      setFileList([]);
+    }
   }, [tarefa, form, initialStatus]);
 
-  const onFinish = (values) => {
+  const handleChange = (info) => {
+    if (info.file.status === 'done' || info.file.status === 'error') {
+      // Se necessário, você pode adicionar lógica aqui
+    }
+  };
+
+  const customRequest = async ({ file, onSuccess, onError }) => {
     try {
-      if (id) {
-        dispatch(updateTarefaRequest({ ...values, id }));
-      } else {
-        dispatch(createTarefaRequest({ ...values, status: 'Pendente' }));
+      const isValidImage = file.type.startsWith('image/');
+      if (!isValidImage) {
+        message.error('Por favor, selecione apenas arquivos de imagem!');
+        onError();
+        return;
       }
 
-      message.success('Tarefa salva com sucesso!');
+      // Simulando um atraso de upload
+      setTimeout(async () => {
+        // Substitua esta função pela lógica real de upload para o backend
+        const imageUrl = 'URL_DA_IMAGEM_NO_BACKEND';
+        setFileList([{ uid: file.uid, name: file.name, status: 'done', url: imageUrl }]);
+        onSuccess();
+      }, 1000);
+    } catch (error) {
+      console.error('Erro ao fazer upload da imagem:', error);
+      onError();
+    }
+  };
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+
+  const onFinish = async (values) => {
+    try {
+      if (fileList.length > 0) {
+        const imageUrl = fileList[0].url;
+        if (id) {
+          await dispatch(updateTarefaRequest({ ...values, id, imageUrl }));
+        } else {
+          await dispatch(createTarefaRequest({ ...values, status: 'Pendente', imageUrl }));
+        }
+      } else {
+        if (id) {
+          await dispatch(updateTarefaRequest({ ...values, id }));
+        } else {
+          await dispatch(createTarefaRequest({ ...values, status: 'Pendente' }));
+        }
+      }
+
       form.resetFields();
       navigate('/');
+      message.success('Tarefa salva com sucesso!');
     } catch (error) {
       console.error('Erro ao salvar a tarefa:', error);
       message.error('Erro ao salvar a tarefa. Tente novamente mais tarde.');
     }
   };
 
-  const handleBack = () => {
-    navigate('/');
-  };
-  {console.log(tarefa?.description)}
   return (
     <>
       <CustomHeader pageTitle={id ? 'Editar Tarefa' : 'Nova Tarefa'} />
@@ -60,25 +107,40 @@ const TarefaForm = () => {
       <div style={{ display: 'flex', width: 'auto', justifyContent: 'center' }}>
         <Form form={form} onFinish={onFinish} layout="vertical" style={{ minWidth: 600 }}>
           <Form.Item
-            style={{ fontWeight: 'bold' }}
             label="Descrição da Tarefa"
             name="description"
             rules={[{ required: true, message: 'Informe a descrição da tarefa' }]}
-            value={tarefa?.description}
           >
             <Input />
           </Form.Item>
-          <Form.Item style={{ fontWeight: 'bold' }} label="Status" name="status" initialValue={initialStatus}>
+          <Form.Item label="Status" name="status" initialValue={initialStatus}>
             <Select>
               <Option value="Pendente">Pendente</Option>
               <Option value="Finalizada">Finalizada</Option>
             </Select>
           </Form.Item>
+          <Form.Item label="Imagem" extra="Escolha uma imagem para a tarefa">
+            <Upload
+              name="file"
+              listType="picture-card"
+              fileList={fileList}
+              customRequest={customRequest}
+              showUploadList={{ showDownloadIcon: false }}
+              beforeUpload={() => false}
+              onChange={handleChange}
+            >
+              {fileList.length >= 1 ? (
+                <img src={fileList[0].url} alt="Imagem da Tarefa" style={{ width: '100%' }} />
+              ) : (
+                uploadButton
+              )}
+            </Upload>
+          </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Salvar Tarefa
             </Button>
-            <Button style={{ marginLeft: 8 }} onClick={handleBack}>
+            <Button style={{ marginLeft: 8 }} onClick={() => navigate('/')}>
               Voltar
             </Button>
           </Form.Item>

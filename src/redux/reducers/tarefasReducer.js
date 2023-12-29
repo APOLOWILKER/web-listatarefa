@@ -48,7 +48,6 @@ const handleRequest = (state) => {
 
 // Função para lidar com o sucesso (loading false)
 const handleSuccess = (state) => {
-  // console.log('Handling success...');
   return {
     ...state,
     loading: false,
@@ -57,7 +56,6 @@ const handleSuccess = (state) => {
 
 // Função para lidar com o sucesso ao completar uma tarefa (loading false, atualiza o status da tarefa)
 const handleCompleteTarefaSuccess = (state, completedTarefaId) => {
-  // console.log('Handling complete tarefa success. Completed Tarefa ID:', completedTarefaId);
   return {
     ...state,
     loading: false,
@@ -69,7 +67,6 @@ const handleCompleteTarefaSuccess = (state, completedTarefaId) => {
 
 // Função para lidar com o sucesso ao buscar tarefas (loading false, atualiza a lista de tarefas)
 const handleFetchTarefasSuccess = (state, tarefas) => {
-  // console.log('Handling fetch tarefas success. Tarefas:', tarefas);
   return {
     ...state,
     tarefas,
@@ -79,7 +76,6 @@ const handleFetchTarefasSuccess = (state, tarefas) => {
 
 // Função para lidar com falhas (loading false, atualiza o erro)
 const handleFailure = (state, error) => {
-  // console.log('Handling failure. Error:', error);
   return {
     ...state,
     loading: false,
